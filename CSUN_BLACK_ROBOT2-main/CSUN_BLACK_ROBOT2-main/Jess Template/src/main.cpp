@@ -16,12 +16,10 @@ ez::Drive chassis(
     4.125,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
     200);   // Wheel RPM = cartridge * (motor gear / wheel gear)
 
-    //MOTOR CONTROL
-//change 10/22/2026 by Lloyd -> makes the control for R1 and R2
-pros::Motor lift_motor(
-    6,
+// R1 raises the lift; L1 lowers it.
+pros::MotorGroup lift_motors(
+    {1, 2},
     pros::E_MOTOR_GEARSET_18,
-    false,
     pros::E_MOTOR_ENCODER_DEGREES
 );
 // Uncomment the trackers you're using here!
@@ -275,16 +273,13 @@ void opcontrol() {
     // chassis.opcontrol_arcade_flipped(ez::SPLIT);    // Flipped split arcade
     // chassis.opcontrol_arcade_flipped(ez::SINGLE);   // Flipped single arcade
 
-    //change 10/22/2026 By Lloyd ->makes the control for R1 and R2
-if (master.get_digital(DIGITAL_R1)) {
-  lift_motor.move(80);      // lift motor
-}
-else if (master.get_digital(DIGITAL_L1)) {
-  lift_motor.move(-80);     // drop motor
-}
-else {
-  lift_motor.move(0);       // Stop
-}
+    if (master.get_digital(DIGITAL_R1)) {
+      lift_motors.move(80);
+    } else if (master.get_digital(DIGITAL_L1)) {
+      lift_motors.move(-80);
+    } else {
+      lift_motors.move(0);
+    }
     // . . .
     // Put more user control code here!
     // . . .
